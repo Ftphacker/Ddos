@@ -1,0 +1,22 @@
+---
+- name: Initialize Docker Swarm
+  hosts: managers
+  become: true
+  tasks:
+    - name: Initialize Docker Swarm
+      shell: docker swarm init --advertise-addr {{ ansible_host }}:2377 > /vagrant/token
+      args:
+        stdin: "yes"
+
+    - name: Create token-command
+      shell: tr -d '\n' < /vagrant/token | sed -E "s/.*?swarm join /docker swarm join /" | sed -E "s/2377.*/2377/" > /vagrant/command
+      args:
+        stdin: "yes"
+        
+- name: Join Workers to Docker Swarm
+  hosts: workers
+  become: true
+  tasks:
+
+    - name: Join Worker to Swarm
+      command: sudo sh /vagrant/command
