@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Nginx!</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        .drop {
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div class="drop" id="mainDrop"></div>
+
+    <script>
+        const colors = ['red', 'blue', 'green', 'yellow', 'pink', 'purple', 'orange', 'grey', 'black', 'brown'];
+        let drops = [];
+
+        function createDrop(size = 5) {
+            const drop = document.createElement('div');
+            drop.className = 'drop';
+            drop.style.width = size + 'px';
+            drop.style.height = size + 'px';
+            document.body.appendChild(drop);
+            return drop;
+        }
+
+        function growDrop(drop, maxSize = 500, speed = 1) {
+            let size = 1;
+            function frame() {
+                size += speed;
+                if (size >= maxSize) {
+                    explodeDrop(drop, size);
+                    return;
+                }
+
+                drop.style.width = size + 'px';
+                drop.style.height = size + 'px';
+                drop.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        }
+
+        function explodeDrop(drop, size) {
+            const rect = drop.getBoundingClientRect();
+            for (let i = 0; i < 20; i++) { // Теперь создаем только 20 шариков
+                const smallDrop = createDrop();
+                smallDrop.style.left = (rect.left + size / 2) + 'px';
+                smallDrop.style.top = (rect.top + size / 2) + 'px';
+                smallDrop.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                drops.push({ drop: smallDrop, dx: Math.random() * 6 - 3, dy: Math.random() * 6 - 3 });
+            }
+            drop.remove();
+            fallDrops();
+        }
+
+        function fallDrops() {
+            let allLanded = true;
+            drops.forEach(item => {
+                item.dy += 0.1; // Gravity effect
+                item.drop.style.left = (item.drop.offsetLeft + item.dx) + 'px';
+                item.drop.style.top = (item.drop.offsetTop + item.dy) + 'px';
+
+                if (item.drop.offsetTop + item.drop.offsetHeight < window.innerHeight) {
+                    allLanded = false;
+                }
+            });
+
+            if (allLanded) {
+                drops.forEach(item => item.drop.remove());
+                drops = [];
+                startAnimation();
+            } else {
+                requestAnimationFrame(fallDrops);
+            }
+        }
+
+        function startAnimation() {
+            const drop = createDrop(100);
+            drop.id = 'mainDrop';
+            growDrop(drop);
+        }
+
+        startAnimation();
+    </script>
+</body>
+</html>

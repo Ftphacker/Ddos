@@ -1,0 +1,91 @@
+---
+- name: Deploy Apache Docker Container
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Pull Apache Docker image
+      docker_image:
+        name: httpd
+        source: pull
+
+    - name: Create directory for apache configuration
+      file:
+        path: /apache_conf
+        state: directory
+
+    - name: Copy apache configuration
+      copy:
+        src: /vagrant/Configs/Apache/apache.conf
+        dest: /apache_conf/apache.conf
+
+    - name: Create apache logs directory
+      file:
+        path: /apache_logs
+        state: directory
+    
+    - name: Create ModSecurity configuration directory
+      file:
+        path: /etc/modsecurity
+        state: directory
+        mode: '0755'
+
+    - name: Copy ModSecurity configuration
+      copy:
+        src: /vagrant/Configs/Apache/modsecurity.conf
+        dest: /etc/modsecurity/modsecurity.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Create ModEvasive configuration directory
+      file:
+        path: /etc/mod_evasive
+        state: directory
+        mode: '0755'
+
+    - name: Copy ModEvasive configuration
+      copy:
+        src: /vagrant/Configs/Apache/modevasive.conf
+        dest: /etc/mod_evasive/evasive.conf  # Проверьте путь настройки ModEvasive
+
+    - name: Create directory for dockerfile
+      file:
+        path: /docker_files
+        state: directory
+
+    - name: Copy Dockerfile
+      copy:
+        src: /vagrant/Configs/Apache/Dockerfile
+        dest: /docker_files/Dockerfile
+
+    - name: Create directory for site
+      file:
+        path: /docker_files/www
+        state: directory
+
+    - name: Copy index.html
+      copy:
+        src: /vagrant/site/script.py
+        dest: /docker_files/www/script.py
+
+    - name: Build custom Apache Docker image
+      community.docker.docker_image:
+        build:
+          path: "/docker_files"  # Укажите путь к директории, где находится Dockerfile
+        name: custom-apache-image
+        source: build
+
+    # - name: Run Apache container
+    #   docker_container:
+    #     name: apache_container
+    #     image: custom-apache-image
+    #     ports:
+    #       - "8000:8000"
+    #     volumes:
+    #       - /apache_conf/apache.conf:/usr/local/apache2/conf/httpd.conf
+    #       - /apache_logs:/var/log/apache2
+    #       - /www/site:/usr/local/apache2/htdocs
+    #       #- /etc/modsecurity/:/etc/modsecurity/  # Монтируйте папку ModSecurity
+    #       #- /etc/mod_evasive/:/etc/mod_evasive/  # Монтируйте папку ModEvasive
+    #     restart_policy: always
