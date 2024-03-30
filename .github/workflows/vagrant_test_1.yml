@@ -1,0 +1,16 @@
+name: Test Vagrant
+
+on:[push]
+
+jobs:
+  test-vagrant:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set execute permission for Vagrantfile
+      run: chmod +x Vagrantfile
+
+    - name: Run vagrant up
+      run: vagrant up
