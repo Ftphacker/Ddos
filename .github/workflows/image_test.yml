@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build Docker image
-      run: docker build -t my-docker-image -f Configs/Dockerfile .
+      run: docker build -t my-docker-image -f ../../Configs/Apache/Dockerfile .
 
     - name: Run tests
       run: docker run my-docker-image npm test
