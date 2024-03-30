@@ -9,6 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install Vagrant
+      run: sudo apt-get install vagrant
+
     - name: Set execute permission for Vagrantfile
       run: chmod +x Vagrantfile
 
