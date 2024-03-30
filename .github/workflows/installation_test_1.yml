@@ -6,4 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: ./Scripts/installation.sh
+      - name: Set execute permission for installation.sh
+        run: chmod +x Scripts/installation.sh
+      - name: Run installation.sh script
+        run: ./Scripts/installation.sh
