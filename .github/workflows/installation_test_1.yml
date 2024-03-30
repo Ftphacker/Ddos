@@ -1,0 +1,8 @@
+name: Test installation packets
+run-name: ${{ github.actor }} test GitHub Actions
+on: [push]
+jobs:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - run: ./Scripts/installation.sh
