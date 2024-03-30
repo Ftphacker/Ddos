@@ -1,6 +1,6 @@
 name: Test Vagrant
 
-on:[push]
+on: [push]
 
 jobs:
   test-vagrant:
