@@ -1,5 +1,5 @@
 name: Test installation packets
-run-name: ${{ github.actor }} test GitHub Actions
+run-name: ${{ github.actor }} test installation
 on: [push]
 jobs:
   installation-packets:
